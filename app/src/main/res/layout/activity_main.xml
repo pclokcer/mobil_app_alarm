@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="8dp"
+    tools:context=".MainActivity"
+    android:background="@drawable/backpic">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="200dp"
+        android:background="@drawable/loginpic" />
+
+    <EditText
+        android:layout_marginTop="20dp"
+        android:id="@+id/idd"
+        android:layout_width="270dp"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/passww"
+        android:layout_centerInParent="true"
+        android:background="@drawable/loginmail"
+        android:drawableLeft="@drawable/avatar"
+        android:drawablePadding="10dp"
+        android:hint="Kullanıcı Adı"
+        android:text=""
+        android:layout_gravity="center"/>
+
+    <EditText
+        android:id="@+id/passww"
+        android:layout_width="270dp"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/send"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/loginmail"
+        android:drawableLeft="@drawable/pasword"
+        android:drawablePadding="10dp"
+        android:hint="Şifre"
+        android:inputType="textPassword"
+        android:text=""
+        android:layout_gravity="center"/>
+
+    <Button
+        android:id="@+id/send"
+        android:layout_width="150dp"
+        android:layout_height="50dp"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/logbuton"
+        android:text="GİRİŞ YAP"
+        android:textColor="#FAFAFA"
+        android:layout_gravity="center"/>
+
+    <ProgressBar
+        android:id="@+id/barr"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center"/>
+</LinearLayout>
