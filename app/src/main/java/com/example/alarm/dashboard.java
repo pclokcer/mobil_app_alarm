@@ -19,6 +19,9 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import retrofit2.Call;
@@ -81,10 +84,14 @@ public class dashboard extends AppCompatActivity {
         rast.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Date timenow = new Date();
+                SimpleDateFormat  df = new SimpleDateFormat("yyyy-MM-dd");
+                String strDate= df.format(timenow);
+
                 //sendobj obj = new sendobj("2019-12-27 00:00:00","2019-12-27 23:59:59",28);
-                obj = "{\"start_date\":\"2019-12-27 00:00:00\"," +
-                        "\"end_date\":\"2019-12-27 23:59:59\"," +
-                        "\"device_id\":28}";
+                /*obj = "{\"start_date\":\""+df+" 00:00:00\"," +
+                        "\"end_date\":\""+df+" 23:59:59\"," +
+                        "\"device_id\":28}";*/
 
                 bar.setVisibility(View.VISIBLE);
                 getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
