@@ -44,6 +44,8 @@ public class MainActivity extends AppCompatActivity {
         sendd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                name = idd.getText().toString();
+                pass = passw.getText().toString();
                 CheckLogin baglan = new CheckLogin();
                 baglan.execute(new String[]{
                         idd.getText().toString(),
@@ -53,6 +55,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+
+    String name,pass;
 
     public class CheckLogin extends AsyncTask<String, String, String> {
         String content = null;
@@ -98,8 +102,10 @@ public class MainActivity extends AppCompatActivity {
                     } else {
                         login posts = response.body();
                         content = posts.getToken();
-                        Intent dash = new Intent(MainActivity.this, dashboard.class);
+                        Intent dash = new Intent(MainActivity.this, getalarm.class);
                         dash.putExtra("token", content);
+                        dash.putExtra("name", name);
+                        dash.putExtra("pass", pass);
                         startActivity(dash);
                     }
                 }

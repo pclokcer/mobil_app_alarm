@@ -26,7 +26,7 @@ public class data {
     private String lastPageUrl;
     @SerializedName("next_page_url")
     @Expose
-    private Object nextPageUrl;
+    private String nextPageUrl;
     @SerializedName("path")
     @Expose
     private String path;
@@ -91,11 +91,11 @@ public class data {
         this.lastPageUrl = lastPageUrl;
     }
 
-    public Object getNextPageUrl() {
+    public String getNextPageUrl() {
         return nextPageUrl;
     }
 
-    public void setNextPageUrl(Object nextPageUrl) {
+    public void setNextPageUrl(String nextPageUrl) {
         this.nextPageUrl = nextPageUrl;
     }
 
@@ -138,9 +138,4 @@ public class data {
     public void setTotal(Integer total) {
         this.total = total;
     }
-
-    public List<datadatum> getEmployee(){
-        return data;
-    }
-
 }

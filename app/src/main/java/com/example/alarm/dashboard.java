@@ -29,7 +29,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 public class dashboard extends AppCompatActivity {
 
@@ -55,9 +54,7 @@ public class dashboard extends AppCompatActivity {
         token = getIntent().getExtras().getString("token");
         read();
 
-        Retrofit retro = new Retrofit.Builder().baseUrl("http://18.197.146.163/api/").addConverterFactory(ScalarsConverterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
+        Retrofit retro = new Retrofit.Builder().baseUrl("http://18.197.146.163/api/").addConverterFactory(GsonConverterFactory.create()).build();
         jsonapi = retro.create(api.class);
 
         save.setOnClickListener(new View.OnClickListener() {
@@ -81,7 +78,7 @@ public class dashboard extends AppCompatActivity {
             }
         });
 
-        rast.setOnClickListener(new View.OnClickListener() {
+        /*rast.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Date timenow = new Date();
@@ -89,9 +86,9 @@ public class dashboard extends AppCompatActivity {
                 String strDate= df.format(timenow);
 
                 //sendobj obj = new sendobj("2019-12-27 00:00:00","2019-12-27 23:59:59",28);
-                /*obj = "{\"start_date\":\""+df+" 00:00:00\"," +
+                obj = "{\"start_date\":\""+df+" 00:00:00\"," +
                         "\"end_date\":\""+df+" 23:59:59\"," +
-                        "\"device_id\":28}";*/
+                        "\"device_id\":28}";
 
                 bar.setVisibility(View.VISIBLE);
                 getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
@@ -105,9 +102,9 @@ public class dashboard extends AppCompatActivity {
                             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                             return;
                         } else {
-                            List<datadatum> dat = response.body().getData();
+                            /*List<datadatum> dat = response.body().getData();
                             for (datadatum gettir : dat) {
-                                value.setText(gettir.getValue());
+                                //value.setText(gettir.getValue());
                             }
                         }
                     }
@@ -120,7 +117,7 @@ public class dashboard extends AppCompatActivity {
                     }
                 });
             }
-        });
+        });*/
     }
 
     BufferedReader oku;
