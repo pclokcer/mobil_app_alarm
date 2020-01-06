@@ -3,6 +3,7 @@ package com.example.alarm.API;
 import com.example.alarm.getalarms.getalarms;
 import com.example.alarm.getdata.data;
 import com.example.alarm.getdata.datadatum;
+import com.example.alarm.laststepforalarm.laststep;
 import com.example.alarm.laststepforalarm.laststepforalarm;
 import com.example.alarm.login.login;
 
@@ -50,10 +51,10 @@ public interface api {
     );
 
     @Headers("Content-Type: application/json")
-    @POST("data")
-    Call<laststepforalarm[]> getdata(
+    @POST("alerts")
+    Call<laststep> getdata(
             @Query("pagination") String page,
-            @Query("order_by") String gsmdate,
+            @Query("order_by") String gsm_time,
             @Query("sort_by") String desc,
             @Query("token") String token,
             @Body String body

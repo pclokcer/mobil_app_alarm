@@ -1,6 +1,7 @@
 package com.example.alarm;
 
 import android.app.AlarmManager;
+import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
@@ -8,6 +9,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.SystemClock;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.view.MenuItem;
@@ -59,10 +62,7 @@ public class getalarm extends AppCompatActivity
     EditText alarm;
     TextView value;
 
-    String name,pass;
-
-    private TimePickerDialog timePickerDialog;
-    final static int REQUEST_CODE = 1;
+    String name, pass;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,8 +95,6 @@ public class getalarm extends AppCompatActivity
         name = getIntent().getExtras().getString("name");
         pass = getIntent().getExtras().getString("pass");
         gettoken();
-        setAlarm();
-
         getdevicesforalarm();
         wait.postDelayed(new Runnable() {
             @Override
@@ -105,27 +103,59 @@ public class getalarm extends AppCompatActivity
             }
         }, 300);
         unload();
+        //setAlarm();
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Toast.makeText(getBaseContext(), String.valueOf(device_id1), Toast.LENGTH_SHORT).show();
-                //setAlarm();
-
+                setalarm(getNotification("erdem"));
             }
         });
 
     }
 
-    public void gettoken(){
+    public static final String NOTIFICATION_CHANNEL_ID = "10001";
+    private final static String default_notification_channel_id = "default";
+
+    public void setalarm(Notification notification) {
+        Bundle simple_bundle=new Bundle();
+        simple_bundle.putString("namess",name);
+        simple_bundle.putString("passs",pass);
+        Intent notificationIntent = new Intent(this, Alarmmanager.class);
+        notificationIntent.putExtras(simple_bundle);
+
+        notificationIntent.putExtra(Alarmmanager.NOTIFICATION_ID, 1);
+        notificationIntent.putExtra(Alarmmanager.NOTIFICATION, notification);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        //long futureInMillis = SystemClock.elapsedRealtime() + 5000;
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        assert alarmManager != null;
+        //alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, futureInMillis, pendingIntent);
+        alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
+                AlarmManager.INTERVAL_HALF_HOUR,
+                AlarmManager.INTERVAL_HALF_HOUR, pendingIntent);
+
+    }
+
+    private Notification getNotification(String content) {
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, default_notification_channel_id);
+        builder.setContentTitle("Sıcaklık Değerinde Yükselme Var");
+        builder.setContentText(content);
+        builder.setSmallIcon(R.drawable.ic_launcher_foreground);
+        builder.setAutoCancel(true);
+        builder.setChannelId(NOTIFICATION_CHANNEL_ID);
+        return builder.build();
+    }
+
+    public void gettoken() {
         try {
-            File file = new File("data/data/com.example.alarm/token.txt");
+            File file = new File("data/data/com.example.alarm/mail.txt");
             FileWriter fileWriter = new FileWriter(file, false);
             BufferedWriter bWriter = new BufferedWriter(fileWriter);
-            bWriter.write(name+"\r\n"+pass);
+            bWriter.write(name + "\r\n" + pass);
             bWriter.close();
             //Toast.makeText(getBaseContext(), "Alarm Kaydedildi", Toast.LENGTH_SHORT).show();
         } catch (Exception io) {
-           // Toast.makeText(getBaseContext(), "Alarm Kaydedilirken Hata Oluştu", Toast.LENGTH_SHORT).show();
+            // Toast.makeText(getBaseContext(), "Alarm Kaydedilirken Hata Oluştu", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -143,59 +173,33 @@ public class getalarm extends AppCompatActivity
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
     }
 
-    //Alarm void
-    /*private void openPickerDialog(boolean is24hour) {
 
-        Calendar calendar = Calendar.getInstance();
+    /*public void setAlarm() {
+        Toast.makeText(getApplicationContext(), "Alarm Ayarlandı!", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(this, Alarmmanager.class);
+        intent.putExtra("userid", name);
+        intent.putExtra("password", pass);
 
-        timePickerDialog = new TimePickerDialog(
-                getalarm.this,
-                onTimeSetListener,
-                calendar.get(Calendar.HOUR_OF_DAY),
-                calendar.get(Calendar.MINUTE),
-                is24hour);
-        timePickerDialog.setTitle("Alarm Ayarla");
-
-        timePickerDialog.show();
-    }
-
-    TimePickerDialog.OnTimeSetListener onTimeSetListener
-            = new TimePickerDialog.OnTimeSetListener() {
-
-        @Override
-        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-
-            Calendar calNow = Calendar.getInstance();
-            Calendar calSet = (Calendar) calNow.clone();
-
-            calSet.set(Calendar.HOUR_OF_DAY, hourOfDay);
-            calSet.set(Calendar.MINUTE, minute);
-            calSet.set(Calendar.SECOND, 0);
-            calSet.set(Calendar.MILLISECOND, 0);
-
-            if (calSet.compareTo(calNow) <= 0) {
-
-                calSet.add(Calendar.DATE, 1);
-            }
-
-            setAlarm(calSet);
-        }
-    };*/
-
-    private void setAlarm(){
-        Toast.makeText(getApplicationContext(),"Alarm Ayarlandı!",Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(getBaseContext(), Alarmmanager.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(getBaseContext(), REQUEST_CODE, intent, 0);
-        AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
                 AlarmManager.INTERVAL_HALF_HOUR,
                 AlarmManager.INTERVAL_HALF_HOUR, pendingIntent);
-    }
+    }*/
+
+    //close alarm
+    /*public void CancelAlarm(Context context) {
+        // Kurulu son alarmı ipta et
+        Intent intent = new Intent(context, Alarmmanager.class);
+        PendingIntent sender = PendingIntent.getBroadcast(context, 0, intent, 0);
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        alarmManager.cancel(sender);
+    }*/
 
     ArrayList<String> mek = new ArrayList<String>();
     ArrayList<String> ids = new ArrayList<String>();
 
-    public void getdevicesforalarm(){
+    public void getdevicesforalarm() {
         Retrofit retro = new Retrofit.Builder().baseUrl("http://18.197.146.163/api/").addConverterFactory(GsonConverterFactory.create()).build();
         jsonapi = retro.create(api.class);
 
@@ -210,7 +214,7 @@ public class getalarm extends AppCompatActivity
                     return;
                 } else {
                     List<datadatum> dat = response.body().getData();
-                    for(datadatum get : dat){
+                    for (datadatum get : dat) {
                         ids.add(get.getId().toString());
                         mek.add(get.getTitleName());
                     }
@@ -239,23 +243,25 @@ public class getalarm extends AppCompatActivity
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {
                     getalarmsfordevice(ids.get(count));
-                   // Toast.makeText(getBaseContext(), "THIS IS A TEST" + count, Toast.LENGTH_SHORT).show();
+                    // Toast.makeText(getBaseContext(), "THIS IS A TEST" + count, Toast.LENGTH_SHORT).show();
                     return false;
                 }
             });
         }
         tas.closeDrawers();
     }
+
     String device;
     int device_id1;
     int alarmvalue;
-    public void getalarmsfordevice(final String device_id){
+
+    public void getalarmsfordevice(final String device_id) {
         Retrofit retro = new Retrofit.Builder().baseUrl("http://18.197.146.163/api/devices/").addConverterFactory(GsonConverterFactory.create()).build();
         jsonapi = retro.create(api.class);
 
         loading();
 
-        Call<getalarms[]> call2 = jsonapi.getalarmss(Integer.parseInt(device_id),"false",token);
+        Call<getalarms[]> call2 = jsonapi.getalarmss(Integer.parseInt(device_id), "false", token);
         call2.enqueue(new Callback<getalarms[]>() {
             @Override
             public void onResponse(Call<getalarms[]> call, Response<getalarms[]> response) {
@@ -266,7 +272,7 @@ public class getalarm extends AppCompatActivity
                 } else {
 
                     getalarms[] alarm = response.body();
-                    for(getalarms gets : alarm){
+                    for (getalarms gets : alarm) {
                         device = gets.getDeviceTitleName();
                         device_id1 = gets.getDeviceId();
                         alarmvalue = gets.getValue();
@@ -343,3 +349,42 @@ public class getalarm extends AppCompatActivity
         return true;
     }
 }
+
+//Alarm void
+    /*private void openPickerDialog(boolean is24hour) {
+
+        Calendar calendar = Calendar.getInstance();
+
+        timePickerDialog = new TimePickerDialog(
+                getalarm.this,
+                onTimeSetListener,
+                calendar.get(Calendar.HOUR_OF_DAY),
+                calendar.get(Calendar.MINUTE),
+                is24hour);
+        timePickerDialog.setTitle("Alarm Ayarla");
+
+        timePickerDialog.show();
+    }
+
+    TimePickerDialog.OnTimeSetListener onTimeSetListener
+            = new TimePickerDialog.OnTimeSetListener() {
+
+        @Override
+        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+
+            Calendar calNow = Calendar.getInstance();
+            Calendar calSet = (Calendar) calNow.clone();
+
+            calSet.set(Calendar.HOUR_OF_DAY, hourOfDay);
+            calSet.set(Calendar.MINUTE, minute);
+            calSet.set(Calendar.SECOND, 0);
+            calSet.set(Calendar.MILLISECOND, 0);
+
+            if (calSet.compareTo(calNow) <= 0) {
+
+                calSet.add(Calendar.DATE, 1);
+            }
+
+            setAlarm(calSet);
+        }
+    };*/
