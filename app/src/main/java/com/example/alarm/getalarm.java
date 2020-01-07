@@ -1,16 +1,12 @@
 package com.example.alarm;
 
 import android.app.AlarmManager;
-import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
-import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.SystemClock;
-import android.support.v4.app.NotificationCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.view.MenuItem;
@@ -25,7 +21,6 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.example.alarm.API.api;
@@ -33,16 +28,11 @@ import com.example.alarm.Alarmmanager.Alarmmanager;
 import com.example.alarm.getalarms.getalarms;
 import com.example.alarm.getdata.data;
 import com.example.alarm.getdata.datadatum;
-import com.example.alarm.laststepforalarm.laststepforalarm;
-import com.example.alarm.login.login;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 import retrofit2.Call;
@@ -94,7 +84,6 @@ public class getalarm extends AppCompatActivity
         token = getIntent().getExtras().getString("token");
         name = getIntent().getExtras().getString("name");
         pass = getIntent().getExtras().getString("pass");
-        gettoken();
         getdevicesforalarm();
         wait.postDelayed(new Runnable() {
             @Override
@@ -107,16 +96,16 @@ public class getalarm extends AppCompatActivity
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setalarm(getNotification("erdem"));
+                setalarm();
             }
         });
 
     }
 
     public static final String NOTIFICATION_CHANNEL_ID = "10001";
-    private final static String default_notification_channel_id = "default";
+    public static final String default_notification_channel_id = "default";
 
-    public void setalarm(Notification notification) {
+    public void setalarm() {
         Bundle simple_bundle=new Bundle();
         simple_bundle.putString("namess",name);
         simple_bundle.putString("passs",pass);
@@ -124,39 +113,16 @@ public class getalarm extends AppCompatActivity
         notificationIntent.putExtras(simple_bundle);
 
         notificationIntent.putExtra(Alarmmanager.NOTIFICATION_ID, 1);
-        notificationIntent.putExtra(Alarmmanager.NOTIFICATION, notification);
+        //notificationIntent.putExtra(Alarmmanager.NOTIFICATION, notification);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        //long futureInMillis = SystemClock.elapsedRealtime() + 5000;
+        //long futureInMillis = SystemClock.elapsedRealtime() + 30000;
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         assert alarmManager != null;
-        //alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, futureInMillis, pendingIntent);
+        //alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, futureInMillis,futureInMillis, pendingIntent);
         alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                AlarmManager.INTERVAL_HALF_HOUR,
-                AlarmManager.INTERVAL_HALF_HOUR, pendingIntent);
+                AlarmManager.INTERVAL_FIFTEEN_MINUTES,
+                AlarmManager.INTERVAL_FIFTEEN_MINUTES, pendingIntent);
 
-    }
-
-    private Notification getNotification(String content) {
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, default_notification_channel_id);
-        builder.setContentTitle("Sıcaklık Değerinde Yükselme Var");
-        builder.setContentText(content);
-        builder.setSmallIcon(R.drawable.ic_launcher_foreground);
-        builder.setAutoCancel(true);
-        builder.setChannelId(NOTIFICATION_CHANNEL_ID);
-        return builder.build();
-    }
-
-    public void gettoken() {
-        try {
-            File file = new File("data/data/com.example.alarm/mail.txt");
-            FileWriter fileWriter = new FileWriter(file, false);
-            BufferedWriter bWriter = new BufferedWriter(fileWriter);
-            bWriter.write(name + "\r\n" + pass);
-            bWriter.close();
-            //Toast.makeText(getBaseContext(), "Alarm Kaydedildi", Toast.LENGTH_SHORT).show();
-        } catch (Exception io) {
-            // Toast.makeText(getBaseContext(), "Alarm Kaydedilirken Hata Oluştu", Toast.LENGTH_SHORT).show();
-        }
     }
 
     ProgressDialog progressDialog;
@@ -172,20 +138,6 @@ public class getalarm extends AppCompatActivity
         progressDialog.hide();
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
     }
-
-
-    /*public void setAlarm() {
-        Toast.makeText(getApplicationContext(), "Alarm Ayarlandı!", Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(this, Alarmmanager.class);
-        intent.putExtra("userid", name);
-        intent.putExtra("password", pass);
-
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP,
-                AlarmManager.INTERVAL_HALF_HOUR,
-                AlarmManager.INTERVAL_HALF_HOUR, pendingIntent);
-    }*/
 
     //close alarm
     /*public void CancelAlarm(Context context) {

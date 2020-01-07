@@ -53,9 +53,6 @@ public interface api {
     @Headers("Content-Type: application/json")
     @POST("alerts")
     Call<laststep> getdata(
-            @Query("pagination") String page,
-            @Query("order_by") String gsm_time,
-            @Query("sort_by") String desc,
             @Query("token") String token,
             @Body String body
     );
